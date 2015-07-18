@@ -104,6 +104,6 @@ you can do this:
 
 You can then include the field manually in any of your form.
 
-```ruby
+```erb
 <%= f.auto_permitted_attributes_field %>
 ```
