@@ -58,14 +58,14 @@ simply use the `:_auto` keyword when you call the `permit` method
 in your controllers. For example:
 
 ```ruby
-params.require(:user).permit(:auto)
+params.require(:user).permit(:_auto)
 ```
 
 You can also add any additional fields which are not included
 in the form if you need to.
 
 ```ruby
-params.require(:user).permit(:_auto)
+params.require(:user).permit(:_auto, :password, :something_else)
 ```
 
 ### Forms
