@@ -14,27 +14,30 @@ module ParamAutoPermit
     end
 
     def label_with_auto_attribute_permit(method, text = nil, options = {}, &block)
-      auto_permitted_attributes << method unless (text.is_a?(Hash) ? text : options)[:auto_permit] == false
+      unless (text.is_a?(Hash) ? text : options)[:auto_permit] == false
+        auto_permitted_attributes << method
+      end
       label_without_auto_attribute_permit(method, text, options, &block)
     end
 
     def submit_with_auto_attribute_permit(value = nil, options = {})
       value, options = nil, value if value.is_a?(Hash)
-      include_permit_field = options.delete(:include_auto_permit_field)
+      include_permit_field = options.delete(:auto_permit) != false
       submit_button = submit_without_auto_attribute_permit(value, options)
-      unless include_permit_field == false
-        submit_button.safe_concat(self.auto_permitted_attributes_field)
-      else
+      if include_permit_field == false
         submit_button
+      else
+        submit_button.safe_concat(self.auto_permitted_attributes_field(options[:auto_permit] || {}))
       end
     end
 
-    def encoded_auto_permitted_attributes
-      ParamAutoPermit.verifier.generate(auto_permitted_attributes)
+    def encoded_auto_permitted_attributes(options = {})
+      options[:form_id] ||= object.class.name
+      ParamAutoPermit.verifier.generate([options[:form_id].to_s, auto_permitted_attributes])
     end
 
-    def auto_permitted_attributes_field
-      @template.hidden_field_tag("#{@object_name}[permitted_fields]", encoded_auto_permitted_attributes)
+    def auto_permitted_attributes_field(attribute_options = {}, field_options = {})
+      @template.hidden_field_tag("#{@object_name}[permitted_fields]", encoded_auto_permitted_attributes(attribute_options), field_options)
     end
   end
 end

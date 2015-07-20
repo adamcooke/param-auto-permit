@@ -20,7 +20,7 @@ Using this gem, you can simply do this and all the fields which
 were included in the your form will be securely permitted.
 
 ```ruby
-User.create(params.require(:user).permit(:_auto))
+User.create(params.require(:user).auto_permit('User'))
 ```
 
 ## How does it work?
@@ -53,19 +53,19 @@ It's really quite simple to get started.
 
 ### Controllers
 
-Whenever you want to permit all the fields for a certain model,
-simply use the `:_auto` keyword when you call the `permit` method
-in your controllers. For example:
+Whenever you want to permit all the fields for a certain model, just use
+the `auto_permit` method and pass it your form ID (which, by default, is the name
+of the model which you are submitting).
 
 ```ruby
-params.require(:user).permit(:_auto)
+params.require(:user).auto_permit('User')
 ```
 
 You can also add any additional fields which are not included
 in the form if you need to.
 
 ```ruby
-params.require(:user).permit(:_auto, :password, :something_else)
+params.require(:user).auto_permit('User', :password, :something_else)
 ```
 
 ### Forms
@@ -99,11 +99,22 @@ the bottom of your form). If you don't wish to include this
 you can do this:
 
 ```erb
-<%= f.submit :include_auto_permit_field => false %>
+<%= f.submit :auto_permit => false %>
 ```
 
 You can then include the field manually in any of your form.
 
 ```erb
 <%= f.auto_permitted_attributes_field %>
+```
+
+If you want to manually set the form ID for the form. You can do this
+using the following two methods.
+
+```erb
+<%= f.submit :auto_permit => {:form_id => 'SomeOtherFormID'} %>
+```
+
+```erb
+<%= f.auto_permitted_attributes_field :form_id => 'SomeOtherFormID' %>
 ```

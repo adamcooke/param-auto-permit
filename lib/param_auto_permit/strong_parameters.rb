@@ -2,19 +2,19 @@ require 'param_auto_permit/verifier'
 
 module ParamAutoPermit
   module StrongParameters
-    def self.included(base)
-      base.class_eval do
-        alias_method_chain :permit, :auto_attribute_permit
+
+    class InvalidModelProvided < StandardError; end
+
+    def auto_permit(required_form_id, *filters)
+      if self['permitted_fields']
+        form_id, fields = ParamAutoPermit.verifier.verify(self['permitted_fields'])
+        unless form_id == required_form_id
+          raise InvalidModelProvided, "Form ID was `#{form_id}` but should be `#{required_form_id}`"
+        end
+        filters = filters | fields
       end
+      permit(*filters)
     end
 
-    def permit_with_auto_attribute_permit(*filters)
-      if filters.delete(:_auto)
-        fields = ParamAutoPermit.verifier.verify(self['permitted_fields'])
-        permit_without_auto_attribute_permit(*(fields | filters))
-      else
-        permit_without_auto_attribute_permit(*filters)
-      end
-    end
   end
 end
