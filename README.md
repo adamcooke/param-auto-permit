@@ -44,7 +44,7 @@ turned back into an array of attributes which should be permitted.
 Just add the gem to your Gemfile to get started.
 
 ```ruby
-gem "param-auto-permit", "~> 1.1"
+gem "param_auto_permit", "~> 1.1"
 ```
 
 ## Usage
